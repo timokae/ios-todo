@@ -25,12 +25,13 @@ class ToDoViewController: UITableViewController {
         
         if let t = todo {
             textFieldName.text = t.name
+
             if let date = t.dueDate {
                 switchDate.isOn = true
+                datePicker.isEnabled = true
                 datePicker.date = date
             }
             prioritySelect.selectedSegmentIndex = t.priority
-            print(t)
         }
         
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
@@ -50,16 +51,23 @@ class ToDoViewController: UITableViewController {
     
     @IBAction func saveButtonClick(_ sender: Any) {        
         if let text = textFieldName.text, text.count > 0 {
-            let toDo = ToDo(
+            let todoToSave = ToDo(
+                id: nil,
                 name: text,
                 priority: prioritySelect.selectedSegmentIndex
             )
             
             if switchDate.isOn {
-                toDo.dueDate = datePicker.date
+                todoToSave.dueDate = datePicker.date
             }
             
-            previuosVC.toDos.append(toDo)
+            if let t = todo {
+                todoToSave.id = t.id
+                previuosVC.updateTodo(todo: todoToSave)
+            } else {
+                previuosVC.createTodo(todo: todoToSave)
+            }
+            
             previuosVC.tableView.reloadData()
             
             navigationController?.popViewController(animated: true)
